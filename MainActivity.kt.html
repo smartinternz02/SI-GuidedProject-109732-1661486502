@@ -1,0 +1,195 @@
+<html>
+<head>
+<title>MainActivity.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #cc7832;}
+.s3 { color: #629755; font-style: italic;}
+.s4 { color: #6a8759;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MainActivity.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">/* 
+ * Copyright (C) 2021 The Android Open Source Project. 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ */</span>
+<span class="s2">package </span><span class="s1">com.example.lemonade</span>
+
+<span class="s1">import androidx.appcompat.app.AppCompatActivity</span>
+<span class="s1">import android.os.Bundle</span>
+<span class="s1">import android.widget.ImageView</span>
+<span class="s1">import android.widget.TextView</span>
+<span class="s1">import com.google.android.material.snackbar.Snackbar</span>
+
+<span class="s2">class </span><span class="s1">MainActivity : AppCompatActivity() {</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">* DO NOT ALTER ANY VARIABLE OR VALUE NAMES OR THEIR INITIAL VALUES.</span>
+     <span class="s3">*</span>
+     <span class="s3">* Anything labeled var instead of val is expected to be changed in the functions but DO NOT</span>
+     <span class="s3">* alter their initial values declared here, this could cause the app to not function properly.</span>
+     <span class="s3">*/</span>
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">LEMONADE_STATE = </span><span class="s4">&quot;LEMONADE_STATE&quot;</span>
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">LEMON_SIZE = </span><span class="s4">&quot;LEMON_SIZE&quot;</span>
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">SQUEEZE_COUNT = </span><span class="s4">&quot;SQUEEZE_COUNT&quot;</span>
+    <span class="s0">// SELECT represents the &quot;pick lemon&quot; state</span>
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">SELECT = </span><span class="s4">&quot;select&quot;</span>
+    <span class="s0">// SQUEEZE represents the &quot;squeeze lemon&quot; state</span>
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">SQUEEZE = </span><span class="s4">&quot;squeeze&quot;</span>
+    <span class="s0">// DRINK represents the &quot;drink lemonade&quot; state</span>
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">DRINK = </span><span class="s4">&quot;drink&quot;</span>
+    <span class="s0">// RESTART represents the state where the lemonade has been drunk and the glass is empty</span>
+    <span class="s1">private </span><span class="s2">val </span><span class="s1">RESTART = </span><span class="s4">&quot;restart&quot;</span>
+    <span class="s0">// Default the state to select</span>
+    <span class="s1">private </span><span class="s2">var </span><span class="s1">lemonadeState = </span><span class="s4">&quot;select&quot;</span>
+    <span class="s0">// Default lemonSize to -1</span>
+    <span class="s1">private </span><span class="s2">var </span><span class="s1">lemonSize = -</span><span class="s5">1</span>
+    <span class="s0">// Default the squeezeCount to -1</span>
+    <span class="s1">private </span><span class="s2">var </span><span class="s1">squeezeCount = -</span><span class="s5">1</span>
+
+    <span class="s1">private </span><span class="s2">var </span><span class="s1">lemonTree = LemonTree()</span>
+    <span class="s1">private </span><span class="s2">var </span><span class="s1">lemonImage: ImageView? = </span><span class="s2">null</span>
+
+
+    <span class="s1">override </span><span class="s2">fun </span><span class="s1">onCreate(savedInstanceState: Bundle?) {</span>
+        <span class="s2">super</span><span class="s1">.onCreate(savedInstanceState)</span>
+        <span class="s1">setContentView(R.layout.activity_main)</span>
+
+        <span class="s0">// === DO NOT ALTER THE CODE IN THE FOLLOWING IF STATEMENT ===</span>
+        <span class="s2">if </span><span class="s1">(savedInstanceState != </span><span class="s2">null</span><span class="s1">) {</span>
+            <span class="s1">lemonadeState = savedInstanceState.getString(LEMONADE_STATE</span><span class="s2">, </span><span class="s4">&quot;select&quot;</span><span class="s1">)</span>
+            <span class="s1">lemonSize = savedInstanceState.getInt(LEMON_SIZE</span><span class="s2">, </span><span class="s1">-</span><span class="s5">1</span><span class="s1">)</span>
+            <span class="s1">squeezeCount = savedInstanceState.getInt(SQUEEZE_COUNT</span><span class="s2">, </span><span class="s1">-</span><span class="s5">1</span><span class="s1">)</span>
+        <span class="s1">}</span>
+        <span class="s0">// === END IF STATEMENT ===</span>
+
+        <span class="s1">lemonImage = findViewById(R.id.image_lemon_state)</span>
+        <span class="s1">setViewElements()</span>
+        <span class="s1">lemonImage!!.setOnClickListener {</span>
+            <span class="s1">clickLemonImage()</span>
+        <span class="s1">}</span>
+        <span class="s1">lemonImage!!.setOnLongClickListener {</span>
+            <span class="s1">showSnackbar()</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">* === DO NOT ALTER THIS METHOD ===</span>
+     <span class="s3">*</span>
+     <span class="s3">* This method saves the state of the app if it is put in the background.</span>
+     <span class="s3">*/</span>
+    <span class="s1">override </span><span class="s2">fun </span><span class="s1">onSaveInstanceState(outState: Bundle) {</span>
+        <span class="s1">outState.putString(LEMONADE_STATE</span><span class="s2">, </span><span class="s1">lemonadeState)</span>
+        <span class="s1">outState.putInt(LEMON_SIZE</span><span class="s2">, </span><span class="s1">lemonSize)</span>
+        <span class="s1">outState.putInt(SQUEEZE_COUNT</span><span class="s2">, </span><span class="s1">squeezeCount)</span>
+        <span class="s2">super</span><span class="s1">.onSaveInstanceState(outState)</span>
+    <span class="s1">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">* Clicking will elicit a different response depending on the state.</span>
+     <span class="s3">* This method determines the state and proceeds with the correct action.</span>
+     <span class="s3">*/</span>
+    <span class="s1">private </span><span class="s2">fun </span><span class="s1">clickLemonImage() {</span>
+        <span class="s2">when</span><span class="s1">(lemonadeState){</span>
+            <span class="s1">SELECT -&gt; {</span>
+                <span class="s1">lemonadeState = SQUEEZE</span>
+                <span class="s2">val </span><span class="s1">tree: LemonTree = lemonTree</span>
+                <span class="s1">lemonSize = tree.pick()</span><span class="s2">;</span>
+                <span class="s1">squeezeCount=</span><span class="s5">0</span>
+            <span class="s1">}</span>
+            <span class="s1">SQUEEZE -&gt; {</span>
+                <span class="s1">squeezeCount += </span><span class="s5">1</span>
+                <span class="s1">lemonSize -= </span><span class="s5">1</span>
+
+                <span class="s1">lemonadeState = </span><span class="s2">if </span><span class="s1">(lemonSize == </span><span class="s5">0</span><span class="s1">){</span>
+                    <span class="s1">DRINK</span>
+                <span class="s1">}</span><span class="s2">else </span><span class="s1">SQUEEZE</span>
+            <span class="s1">}</span>
+            <span class="s1">DRINK -&gt; {</span>
+                <span class="s1">lemonadeState =  RESTART</span>
+                <span class="s1">lemonSize = -</span><span class="s5">1</span>
+            <span class="s1">}</span>
+            <span class="s1">RESTART -&gt; lemonadeState = SELECT</span>
+        <span class="s1">}</span>
+        <span class="s1">setViewElements()</span>
+
+    <span class="s1">}</span>
+
+
+    <span class="s3">/**</span>
+     <span class="s3">* Set up the view elements according to the state.</span>
+     <span class="s3">*/</span>
+    <span class="s1">private </span><span class="s2">fun </span><span class="s1">setViewElements() {</span>
+        <span class="s2">val </span><span class="s1">textAction: TextView = findViewById(R.id.text_action)</span>
+        <span class="s2">val </span><span class="s1">lemonImage: ImageView = findViewById(R.id.image_lemon_state)</span>
+
+        <span class="s2">when </span><span class="s1">(lemonadeState) {</span>
+            <span class="s1">SELECT -&gt; {</span>
+                <span class="s1">textAction.text = </span><span class="s4">&quot;Click to select a lemon!&quot;</span>
+                <span class="s1">lemonImage.setImageResource(R.drawable.lemon_tree)</span>
+            <span class="s1">}</span>
+            <span class="s1">SQUEEZE -&gt; {</span>
+                <span class="s1">textAction.text = </span><span class="s4">&quot;Click to juice the lemon!&quot;</span>
+                <span class="s1">lemonImage.setImageResource(R.drawable.lemon_squeeze)</span>
+            <span class="s1">}</span>
+            <span class="s1">DRINK -&gt; {</span>
+                <span class="s1">textAction.text = </span><span class="s4">&quot;Click to drink your lemonade!&quot;</span>
+                <span class="s1">lemonImage.setImageResource(R.drawable.lemon_drink)</span>
+            <span class="s1">}</span>
+            <span class="s1">RESTART -&gt; {</span>
+                <span class="s1">textAction.text = </span><span class="s4">&quot;Click to start again!&quot;</span>
+                <span class="s1">lemonImage.setImageResource(R.drawable.lemon_restart)</span>
+            <span class="s1">}</span>
+
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s3">/**</span>
+     <span class="s3">* === DO NOT ALTER THIS METHOD ===</span>
+     <span class="s3">*</span>
+     <span class="s3">* Long clicking the lemon image will show how many times the lemon has been squeezed.</span>
+     <span class="s3">*/</span>
+    <span class="s1">private </span><span class="s2">fun </span><span class="s1">showSnackbar(): Boolean {</span>
+        <span class="s2">if </span><span class="s1">(lemonadeState != SQUEEZE) {</span>
+            <span class="s2">return false</span>
+        <span class="s1">}</span>
+        <span class="s2">val </span><span class="s1">squeezeText = </span><span class="s4">&quot;Squeeze count: {squeezeCount}, keep squeezing!&quot;</span>
+        <span class="s1">Snackbar.make(</span>
+            <span class="s1">findViewById(R.id.constraint_Layout)</span><span class="s2">,</span>
+            <span class="s1">squeezeText</span><span class="s2">,</span>
+            <span class="s1">Snackbar.LENGTH_SHORT</span>
+        <span class="s1">).show()</span>
+        <span class="s2">return true</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+<span class="s3">/**</span>
+ <span class="s3">* A Lemon tree class with a method to &quot;pick&quot; a lemon. The &quot;size&quot; of the lemon is randomized</span>
+ <span class="s3">* and determines how many times a lemon needs to be squeezed before you get lemonade.</span>
+ <span class="s3">*/</span>
+<span class="s2">class </span><span class="s1">LemonTree {</span>
+    <span class="s2">fun </span><span class="s1">pick(): Int {</span>
+        <span class="s2">return </span><span class="s1">(</span><span class="s5">2</span><span class="s1">..</span><span class="s5">4</span><span class="s1">).random()</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>
